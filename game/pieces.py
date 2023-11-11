@@ -2,18 +2,12 @@ class Piece:
     def __init__(self, color):
         self.color = color
 
-    # Common method for all pieces (e.g., position)
-
-
 class Pawn(Piece):
     def __init__(self, color):
         super().__init__(color)
         self.first_move = True
     
     def get_legal_moves(self, pos, board):
-        # pos is a tuple (row, col)
-        # board is the current state of the chess board
-        # Return a list of legal moves as (row, col) tuples
         legal_moves = []
         direction = -1 if self.color == "White" else 1
 
@@ -48,9 +42,6 @@ class Knight(Piece):
         super().__init__(color)
     
     def get_legal_moves(self, pos, board):
-        # pos is a tuple (row, col)
-        # board is the current state of the chess board
-        # Return a list of legal moves as (row, col) tuples
         legal_moves = []
         start_row, start_col = pos
 
@@ -71,9 +62,6 @@ class Bishop(Piece):
         super().__init__(color)
     
     def get_legal_moves(self, pos, board):
-        # pos is a tuple (row, col)
-        # board is the current state of the chess board
-        # Return a list of legal moves as (row, col) tuples
         legal_moves = []
         start_row, start_col = pos
 
@@ -105,9 +93,6 @@ class Rook(Piece):
         super().__init__(color)
     
     def get_legal_moves(self, pos, board):
-        # pos is a tuple (row, col)
-        # board is the current state of the chess board
-        # Return a list of legal moves as (row, col) tuples
         legal_moves = []
         start_row, start_col = pos
 
@@ -138,9 +123,6 @@ class Queen(Piece):
         super().__init__(color)
     
     def get_legal_moves(self, pos, board):
-        # pos is a tuple (row, col)
-        # board is the current state of the chess board
-        # Return a list of legal moves as (row, col) tuples
         legal_moves = []
         start_row, start_col = pos
 
@@ -171,9 +153,6 @@ class King(Piece):
         super().__init__(color)
     
     def get_legal_moves(self, pos, board):
-        # pos is a tuple (row, col)
-        # board is the current state of the chess board
-        # Return a list of legal moves as (row, col) tuples
         legal_moves = []
         start_row, start_col = pos
 

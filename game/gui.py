@@ -14,8 +14,6 @@ class ChessGUI:
         self.light_square = (240, 217, 181)
         self.dark_square = (181, 136, 99)
         self.selected_square_highlight_color = (255, 255, 0)
-        self.incorrect_turn_highlight_color = (255, 0, 0)
-        self.incorrect_turn_selected = False
 
         self.font = pygame.font.SysFont("Arial", 32)
 
@@ -60,8 +58,6 @@ class ChessGUI:
 
                 if self.selected_piece and (row, col) == (self.selected_row, self.selected_col):
                     highlight_color = self.selected_square_highlight_color
-                    if self.selected_piece.color != self.board.current_turn:
-                        highlight_color = self.incorrect_turn_highlight_color
                     
                     pygame.draw.rect(
                         self.screen,
@@ -93,9 +89,7 @@ class ChessGUI:
         while running:
             # AI's turn to move
             if self.board.current_turn == "Black" and not self.game_over:
-                print("AI's turn")
                 self.ai.make_move()
-                print("AI moved")
                 self.board.current_turn = "White"
 
             for event in pygame.event.get():
