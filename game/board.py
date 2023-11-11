@@ -36,3 +36,4 @@ class Board:
         else:
             print("Illegal move.")
             return False
+        
