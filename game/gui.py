@@ -1,5 +1,6 @@
 import pygame
 from .board import Board
+from .ai import AI
 
 
 class ChessGUI:
@@ -8,8 +9,6 @@ class ChessGUI:
         self.screen = pygame.display.set_mode((400, 400))
         pygame.display.set_caption("Chess Game")
         self.board = Board()
-
-        self.move_history = []
 
         # Colors and Fonts
         self.light_square = (240, 217, 181)
@@ -24,11 +23,12 @@ class ChessGUI:
         self.piece_images = self.load_images()
 
         # Game State Variables
-        self.current_turn = "White"
         self.selected_piece = None
         self.selected_row = None
         self.selected_col = None
         self.game_over = False
+
+        self.ai = AI(self.board)
 
         self.clock = pygame.time.Clock()
 
@@ -89,57 +89,27 @@ class ChessGUI:
         pygame.display.flip()
 
     def run(self):
-        # Main loop for the GUI
         running = True
         while running:
+            # AI's turn to move
+            if self.board.current_turn == "Black" and not self.game_over:
+                print("AI's turn")
+                self.ai.make_move()
+                print("AI moved")
+                self.board.current_turn = "White"
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                elif event.type == pygame.MOUSEBUTTONDOWN:
+                elif event.type == pygame.MOUSEBUTTONDOWN and self.board.current_turn == "White":
                     self.handle_mouse_click(event)
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_u:  # Check for the "U" key for Undo
-                        self.undo_last_move()
 
             self.draw()
-            
+            pygame.display.flip()
             self.clock.tick(60)
 
         pygame.quit()
-    
-    # Add this method to track moves
-    def track_move(self, move):
-        self.move_history.append(move)
-    
 
-    def undo_last_move(self):
-        """
-        Undo the last move in the move history.
-        
-        Returns:
-            bool: True if a move was successfully undone, False if the move history is empty.
-        """
-        if self.move_history:
-            # Get the last move from the move history
-            last_move = self.move_history.pop()
-            
-            # Extract the start and end positions from the move
-            start_row, start_col, end_row, end_col = last_move
-            
-            # Retrieve the piece that was moved
-            piece = self.board.board[end_row][end_col]
-            
-            # Move the piece back to its original position
-            self.board.board[start_row][start_col] = piece
-            self.board.board[end_row][end_col] = None
-            
-            # Update the current turn
-            self.current_turn = "White" if self.current_turn == "Black" else "Black"
-            
-            return True
-        else:
-            # No moves to undo
-            return False
 
     def handle_mouse_click(self, event):
         if event.button == 1: # Left mouse click

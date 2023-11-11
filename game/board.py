@@ -14,11 +14,6 @@ class Board:
         ]
         self.captured_pieces = {'White': [], 'Black': []}
         self.current_turn = 'White'
-    
-    
-    def change_turn(self):
-        self.current_turn = 'Black' if self.current_turn == 'White' else 'White'
-
 
     def is_in_check(self, color):
         # Find the king's position
@@ -76,32 +71,36 @@ class Board:
             print(f"It's not {selected_piece.color}'s turn.")
             return False
 
-        # Check if the move is legal
-        if selected_piece and (end_row, end_col) in selected_piece.get_legal_moves((start_row, start_col), self.board):
-            # Simulate the move
+        # Get all legal moves for the selected piece
+        legal_moves = selected_piece.get_legal_moves((start_row, start_col), self.board)
+
+        # Filter out moves that would leave the king in check
+        safe_moves = []
+        for move in legal_moves:
+            # Simulate each move
+            self.board[start_row][start_col] = None
+            self.board[move[0]][move[1]] = selected_piece
+
+            if not self.is_in_check(selected_piece.color):
+                safe_moves.append(move)
+
+            # Undo the move
+            self.board[start_row][start_col] = selected_piece
+            self.board[move[0]][move[1]] = None
+
+        if (end_row, end_col) in safe_moves:
+            # Execute the move
             self.board[start_row][start_col] = None
             self.board[end_row][end_col] = selected_piece
 
-            # Check if the move puts or leaves the own king in check
-            if self.is_in_check(selected_piece.color):
-                # Undo the move and abort
-                self.board[start_row][start_col] = selected_piece
-                self.board[end_row][end_col] = target_piece
-                print("Move not allowed: King would be in check.")
-                return False
-
-            # Handle capture
             if target_piece:
                 self.captured_pieces[target_piece.color].append(target_piece)
 
-            # Update 'first_move' attribute for pawns, if applicable
             if hasattr(selected_piece, 'first_move'):
                 selected_piece.first_move = False
 
-            # Change turns
             self.current_turn = 'White' if self.current_turn == 'Black' else 'Black'
 
-            # Check for check or checkmate conditions for the opponent
             opponent_color = 'White' if selected_piece.color == 'Black' else 'Black'
             if self.is_checkmate(opponent_color):
                 print(f"{selected_piece.color} wins by checkmate!")
