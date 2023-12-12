@@ -123,7 +123,7 @@ class ChessGUI:
         elif self.selected_piece:
             # If a piece is already selected and the clicked square is different,
             # attempt to move the piece
-            if (row, col) in self.selected_piece.get_legal_moves((self.selected_row, self.selected_col), self.board.board):
+            if (row, col) in self.selected_piece.get_legal_moves((self.selected_row, self.selected_col), self.board):
                 self.board.move_piece(self.selected_row, self.selected_col, row, col)
             # Deselect after attempting a move
             self.selected_piece = None

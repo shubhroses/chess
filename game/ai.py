@@ -1,4 +1,5 @@
 import random
+import copy
 from .board import Board
 
 class AI:
@@ -12,9 +13,16 @@ class AI:
             for col in range(8):
                 piece = self.board.board[row][col]
                 if piece and piece.color == 'Black':
-                    possible_moves = piece.get_legal_moves((row, col), self.board.board)
-                    for end_row, end_col in possible_moves:
-                        legal_moves.append(((row, col), (end_row, end_col)))
+                    possible_moves = piece.get_legal_moves((row, col), self.board)
+                    
+                    for end_row, end_col in possible_moves.copy():
+                        # Make the move on a copy of the board
+                        board_copy = copy.deepcopy(self.board)
+                        board_copy.move_piece(row, col, end_row, end_col)
+
+                        # If the move does not result in check, add it to the legal moves
+                        if not board_copy.is_check('Black'):
+                            legal_moves.append(((row, col), (end_row, end_col)))
 
         if legal_moves:
             return random.choice(legal_moves)

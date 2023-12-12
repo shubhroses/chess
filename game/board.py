@@ -20,9 +20,9 @@ class Board:
         if selected_piece and selected_piece.color != self.current_turn:
             print(f"It's not {selected_piece.color}'s turn.")
             return False
-
+        
         # Get all legal moves for the selected piece
-        legal_moves = selected_piece.get_legal_moves((start_row, start_col), self.board)
+        legal_moves = selected_piece.get_legal_moves((start_row, start_col), self)
 
         if legal_moves:
             self.board[start_row][start_col] = None
@@ -36,4 +36,26 @@ class Board:
         else:
             print("Illegal move.")
             return False
-        
+    
+    def is_check(self, color):
+        # Find the king
+        king = None
+        for row in range(8):
+            for col in range(8):
+                piece = self.board[row][col]
+                if isinstance(piece, King) and piece.color == color:
+                    king = piece
+                    king_pos = (row, col)
+                    break
+            if king:
+                break
+
+        # Check if any of the opponent's pieces can move to the king's position
+        for row in range(8):
+            for col in range(8):
+                piece = self.board[row][col]
+                if piece and piece.color != color:
+                    if king_pos in piece.get_legal_moves((row, col), self):
+                        return True
+
+        return False

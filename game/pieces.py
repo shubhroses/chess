@@ -32,11 +32,11 @@ class Pawn(Piece):
 
     def is_valid_move(self, board, row, col):
         # Check if the move is within the board and the target square is empty
-        return 0 <= row < 8 and 0 <= col < 8 and board[row][col] == None
+        return 0 <= row < 8 and 0 <= col < 8 and board.board[row][col] == None
     
     def can_capture(self, board, row, col):
         # Check if the move is whithin the board and the target square has an opponent's piece
-        return 0 <= row < 8 and 0 <= col < 8 and board[row][col] is not None and board[row][col].color != self.color
+        return 0 <= row < 8 and 0 <= col < 8 and board.board[row][col] is not None and board.board[row][col].color != self.color
 
 
 class Knight(Piece):
@@ -53,10 +53,10 @@ class Knight(Piece):
         for offset in move_offsets:
             new_row, new_col = start_row + offset[0], start_col + offset[1]
             if 0 <= new_row < 8 and 0 <= new_col < 8:
-                target_square = board[new_row][new_col]
+                target_square = board.board[new_row][new_col]
                 if target_square is None or target_square.color != self.color:
                     legal_moves.append((new_row, new_col))
-
+        
         return legal_moves
 
 class Bishop(Piece):
@@ -75,7 +75,7 @@ class Bishop(Piece):
                 current_row += direction[0]
                 current_col += direction[1]
                 if 0 <= current_row < 8 and 0 <= current_col < 8:
-                    target_square = board[current_row][current_col]
+                    target_square = board.board[current_row][current_col]
                     if target_square is None:
                         legal_moves.append((current_row, current_col))
                     elif target_square.color != self.color:
@@ -106,7 +106,7 @@ class Rook(Piece):
                 current_row += direction[0]
                 current_col += direction[1]
                 if 0 <= current_row < 8 and 0 <= current_col < 8:
-                    target_square = board[current_row][current_col]
+                    target_square = board.board[current_row][current_col]
                     if target_square is None:
                         legal_moves.append((current_row, current_col))
                     elif target_square.color != self.color:
@@ -136,7 +136,7 @@ class Queen(Piece):
                 current_row += direction[0]
                 current_col += direction[1]
                 if 0 <= current_row < 8 and 0 <= current_col < 8:
-                    target_square = board[current_row][current_col]
+                    target_square = board.board[current_row][current_col]
                     if target_square is None:
                         legal_moves.append((current_row, current_col))
                     elif target_square.color != self.color:
@@ -163,8 +163,9 @@ class King(Piece):
         for direction in directions:
             new_row, new_col = start_row + direction[0], start_col + direction[1]
             if 0 <= new_row < 8 and 0 <= new_col < 8:
-                target_square = board[new_row][new_col]
+                target_square = board.board[new_row][new_col]
                 if target_square is None or target_square.color != self.color:
                     legal_moves.append((new_row, new_col))
         
         return legal_moves
+
