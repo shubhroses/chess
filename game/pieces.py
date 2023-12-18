@@ -3,11 +3,11 @@ import copy
 class Piece:
     def __init__(self, color):
         self.color = color
+        self.first_move = True
 
 class Pawn(Piece):
     def __init__(self, color):
         super().__init__(color)
-        self.first_move = True
     
     def get_legal_moves(self, pos, board):
         legal_moves = []
@@ -47,7 +47,7 @@ class Knight(Piece):
         legal_moves = []
         start_row, start_col = pos
 
-        # Relative positions for L-shaped moves
+        # Relative poss for L-shaped moves
         move_offsets = [(-2, -1), (-2, 1), (-1, -2), (-1, 2),(1, -2), (1, 2), (2, -1), (2, 1)]
 
         for offset in move_offsets:
@@ -167,5 +167,19 @@ class King(Piece):
                 if target_square is None or target_square.color != self.color:
                     legal_moves.append((new_row, new_col))
         
+        # Add castling moves
+        if self.first_move:
+            # Kingside castling
+            if isinstance(board.board[pos[0]][7], Rook) and board.board[pos[0]][7].first_move:
+                if not any(board.board[pos[0]][i] for i in range(5, 7)):
+                    if not any(board.is_square_under_attack(pos[0], i, self.color) for i in range(4, 7)):
+                        legal_moves.append((pos[0], 6))
+
+            # Queenside castling
+            if isinstance(board.board[pos[0]][0], Rook) and board.board[pos[0]][0].first_move:
+                if not any(board.board[pos[0]][i] for i in range(1, 4)):
+                    if not any(board.is_square_under_attack(pos[0], i, self.color) for i in range(2, 5)):
+                        legal_moves.append((pos[0], 2))
+
         return legal_moves
 

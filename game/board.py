@@ -24,12 +24,27 @@ class Board:
         # Get all legal moves for the selected piece
         legal_moves = selected_piece.get_legal_moves((start_row, start_col), self)
 
-        if legal_moves:
+        if (end_row, end_col) in legal_moves:
+            # If the move is a castling move, move the rook
+            if isinstance(selected_piece, King) and abs(start_col - end_col) == 2:
+                direction = int((end_col - start_col) / 2)
+                rook_col = 0 if direction == -1 else 7
+                rook = self.board[start_row][rook_col]
+                self.board[start_row][rook_col] = None
+                self.board[start_row][start_col + direction] = rook
+
             self.board[start_row][start_col] = None
             self.board[end_row][end_col] = selected_piece
 
-            if hasattr(selected_piece, 'first_move'):
-                selected_piece.first_move = False
+            # Check if the move puts the king in check
+            if self.is_check(selected_piece.color):
+                # If the move puts the king in check, undo the move and return False
+                self.board[start_row][start_col] = selected_piece
+                self.board[end_row][end_col] = None
+                print("Cannot move into check.")
+                return False
+
+            selected_piece.first_move = False
 
             self.current_turn = 'White' if self.current_turn == 'Black' else 'Black'
             return True
@@ -58,4 +73,13 @@ class Board:
                     if king_pos in piece.get_legal_moves((row, col), self):
                         return True
 
+        return False
+
+    def is_square_under_attack(self, row, col, color):
+        for i in range(8):
+            for j in range(8):
+                piece = self.board[i][j]
+                if piece and piece.color != color:
+                    if (row, col) in piece.get_legal_moves((i, j), self):
+                        return True
         return False
